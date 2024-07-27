@@ -1,7 +1,7 @@
 import os
 import json
 import asyncio
-from solana.publickey import PublicKey
+from solders.pubkey import Pubkey
 from solana.transaction import Transaction
 from solana.rpc.async_api import AsyncClient
 from solana.rpc.types import TxOpts
