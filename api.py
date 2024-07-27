@@ -12,30 +12,36 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+# Load environment variables
 PRIVATE_KEY = os.getenv('SOLANA_PRIVATE_KEY')
-TOKEN_MINT_ADDRESS = os.getenv('TOKEN_MINT_ADDRESS')  
+TOKEN_MINT_ADDRESS = "7fwzSLmfhW9RajxngqUCV3g3t87qoUgnkHRgrK57548B"  # Your custom token's mint address
 DEVNET_URL = "https://api.devnet.solana.com"
 
+# Function to load the sender's keypair
 def load_keypair():
     return Keypair.from_secret_key(bytes.fromhex(PRIVATE_KEY))
 
+# Function to transfer tokens
 async def transfer_token(destination_wallet, amount):
     async with AsyncClient(DEVNET_URL) as client:
-        
+        # Load sender's keypair
         sender_keypair = load_keypair()
-       
+        
+        # Get the sender's token account
         sender_token_account = await AsyncToken.get_associated_token_address(
             program_id=TOKEN_PROGRAM_ID, 
             mint=PublicKey(TOKEN_MINT_ADDRESS),
             owner=sender_keypair.public_key
         )
 
+        # Get or create the recipient's token account
         recipient_token_account = await AsyncToken.get_associated_token_address(
             program_id=TOKEN_PROGRAM_ID, 
             mint=PublicKey(TOKEN_MINT_ADDRESS),
             owner=PublicKey(destination_wallet)
         )
 
+        # Create the transaction
         tx = Transaction()
         token = AsyncToken(
             conn=client, 
@@ -53,7 +59,7 @@ async def transfer_token(destination_wallet, amount):
             )
         )
 
-        
+        # Send the transaction
         response = await client.send_transaction(
             tx, 
             sender_keypair, 
