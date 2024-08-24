@@ -113,5 +113,4 @@ To start the API:
 
 - **Private Key Management**: Ensure the `SOLANA_PRIVATE_KEY` is securely managed and not exposed in the source code or logs.
 - **API Rate Limiting**: Consider implementing rate limiting to prevent abuse.
-```
 
